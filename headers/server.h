@@ -11,16 +11,17 @@ namespace srv {
 		Server();
 		Server(int portNumber);
 
-		void test();
+		void start();
+		void stop(SOCKET socketToClose);
 
 	private:
 		int port;
 
 		int load_WSA_dll();
-		SOCKET socket();
-		int bindSocket();
-		int listen();
-		SOCKET acceptSocket();
+		SOCKET buildSocket();
+		int bindSocket(int port, SOCKET serverSocket);
+		int listenForConnection(SOCKET serverSocket);
+		SOCKET acceptSocket(SOCKET serverSocket);
 		void broadCastMessage();
 		int receiveData();
 	};
