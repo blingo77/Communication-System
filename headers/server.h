@@ -23,7 +23,7 @@ namespace srv {
 		int listenForConnection(SOCKET serverSocket);
 		SOCKET acceptSocket(SOCKET serverSocket);
 		void broadCastMessage();
-		int receiveData();
+		int receiveData(SOCKET clientSocket);
 	};
 
 }

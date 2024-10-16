@@ -24,11 +24,12 @@ namespace srv {
 		SOCKET servSocket;
 		SOCKET acceptedSocket;
 
-		Server::load_WSA_dll();
-		servSocket = Server::buildSocket();
-		bindSocket(Server::port, servSocket);
-		Server::listenForConnection(servSocket);
-		acceptedSocket = Server::acceptSocket(servSocket);
+		this->load_WSA_dll();
+		servSocket = this->buildSocket();
+		bindSocket(this->port, servSocket);
+		this->listenForConnection(servSocket);
+		acceptedSocket = this->acceptSocket(servSocket);
+		this->receiveData(acceptedSocket);
 	}
 	                                                                           
 	void Server::stop(SOCKET socketToClose = NULL){
@@ -57,7 +58,7 @@ namespace srv {
 		}
 		else {
 			cerr << "Winsock dll not found." << endl;
-			Server::stop();
+			this->stop();
 			return 0;
 		}
 		return 0;
@@ -76,7 +77,7 @@ namespace srv {
 		}
 		else {
 			cerr << "Error creating the server socket: " << WSAGetLastError() << endl;
-			Server::stop();
+			this->stop();
 			closesocket(serverSocket);	// close the socket
 		}
 
@@ -114,7 +115,7 @@ namespace srv {
 		}
 		else {
 			cerr << "Failed to bind the socket, Error: " << WSAGetLastError << endl;
-			Server::stop(serverSocket);
+			this->stop(serverSocket);
 		}
 
 		return 0;
@@ -179,6 +180,39 @@ namespace srv {
 		}
 
 		return newClientSocket;
+	}
+
+	int Server::receiveData(SOCKET clientSocket){
+
+		/*
+			recv(function):
+
+			- this function recieves data from a connected socket.
+
+			int recv(SOCKET s, char* buf, int len, int flags)
+
+			-s: The descriptor that identifies a connected socket.
+			-buf: A pointer to the buffer to recieve incoming data.
+			-len: The length in bytes of the buffer pointed to by the buf parameter.
+			-flags: optional set of flags that influences the behavior of this function
+
+			- if no errors, then recv returns the number of bytes received. If the
+			connection has been closed gracefully, the return value is zero. Otherwise
+			SOCKET_ERROR is returned
+		*/
+
+		char incomingBuffer[200];
+		int byteCount;
+
+		byteCount = recv(clientSocket, incomingBuffer, sizeof(incomingBuffer), 0);
+
+		if (byteCount < 0) {
+			cerr << "Error recieving data: " << WSAGetLastError() << endl;
+		}
+		else {
+			cout << "Recieved Data: " << incomingBuffer << endl;
+		}
+		return 0;
 	}
 	;
 
