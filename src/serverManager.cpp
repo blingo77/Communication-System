@@ -1,0 +1,62 @@
+#include <WinSock2.h>
+#include <iostream>
+#include <unordered_map>
+#include "..\headers\serverManager.h"
+
+using namespace std;
+
+ServerManager::ServerManager(){
+}
+
+void ServerManager::startServer(){
+
+	SOCKET serverSocket;
+	SOCKET acceptedSocket;
+
+	string roomChoice = "Pick a room (Enter a Room): \n 1. Room 1 \n 2. Room 2";
+
+	serverSocket = this->server.start();
+
+	while (true) {
+		
+		acceptedSocket = this->server.acceptSocket(serverSocket);
+
+		if (acceptedSocket == INVALID_SOCKET) {
+			break;
+		}
+
+		this->addToRoom(roomChoice, acceptedSocket);
+
+		thread clientThread([this, acceptedSocket]() {
+			this->server.receiveMessages(acceptedSocket);
+			});
+		clientThread.detach();
+	}
+}
+
+void ServerManager::addToRoom(string message, SOCKET clientSocket){
+
+	int room;
+
+	this->server.broadCastAlert(message, clientSocket);
+	room = this->server.receiveIntData(clientSocket);		// will give us the number entered
+
+	// Make sure they input a valid room
+	while (!room) {
+		
+		this->server.broadCastAlert("Not a valid room!", clientSocket);	// Warn client
+		this->server.broadCastAlert(message, clientSocket);
+		room = this->server.receiveIntData(clientSocket);		// will give us the number entered
+
+	}
+
+	this->roomMap[room].push_back(clientSocket);	// add the clients socket to the hashmap
+
+	// Show what sockets are in the inputted room
+	cout << "Sockets: ";
+	for (const auto& val : this->roomMap[room]) {
+		cout << val << ", ";
+	}
+
+	cout << room << endl;
+}

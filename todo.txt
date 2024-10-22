@@ -1,0 +1,24 @@
+TODO
+
+create single socket rooms:
+
+- ask user what room they want to join.
+
+- recieve from client what room they want to join
+
+- place them in that room 
+	- create hashmap for the rooms
+		- value is the room #
+		- key can be a vector of the client sockets that are in that room
+
+- route messages that are sent from the clients in those rooms to the other clients in the room
+
+
+{ 1 : {100, 200, 300, 343},
+  2 : {101, 202, 303, 342}
+};
+
+- if socket 100 sends a message, recieve it look at what room its in, and send to everyone in its
+  correspoding vector
+
+- give them the ability to leave that room and join a new one

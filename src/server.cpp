@@ -3,6 +3,10 @@
 #include <iostream>
 #include <tchar.h>
 #include "../headers/server.h"
+#include <string>
+#include <mutex>
+#include <thread>
+#include <cstdlib>
 
 using namespace std;
 
@@ -19,7 +23,7 @@ namespace srv {
 		: port(portNumber){
 	}
 
-	void Server::start(){
+	SOCKET Server::start(){
 
 		SOCKET servSocket;
 		SOCKET acceptedSocket;
@@ -28,8 +32,8 @@ namespace srv {
 		servSocket = this->buildSocket();
 		bindSocket(this->port, servSocket);
 		this->listenForConnection(servSocket);
-		acceptedSocket = this->acceptSocket(servSocket);
-		this->receiveData(acceptedSocket);
+
+		return servSocket;
 	}
 	                                                                           
 	void Server::stop(SOCKET socketToClose = NULL){
@@ -172,6 +176,8 @@ namespace srv {
 		if (newClientSocket != INVALID_SOCKET) {
 			
 			cout << "Connected..." << endl;
+			lock_guard<mutex> lock(this->mtx);
+			allConnectedSockets.push_back(newClientSocket);
 		}
 		else {
 			cerr << "Accept failed: " << WSAGetLastError() << endl;
@@ -182,7 +188,31 @@ namespace srv {
 		return newClientSocket;
 	}
 
-	int Server::receiveData(SOCKET clientSocket){
+	void Server::broadCastAlert(string alert, SOCKET clientSocket) {
+
+		lock_guard<mutex> lock(this->mtx);
+
+		// send the alert to the client socket
+		send(clientSocket, alert.c_str(), alert.size(), 0);
+	}
+
+	// broadcast messages sent between users/clients
+	void Server::broadCastMessage(string buffer, SOCKET senderSocket){
+
+		lock_guard<mutex> lock(this->mtx);
+
+		string msg ;
+
+		for (SOCKET client : allConnectedSockets) {
+
+			// if client is the senderSocket let them know they sent it with "you"
+			msg = client != senderSocket ? to_string(client) + ": " + buffer + "\n" : "You: " + buffer + "\n";
+			send(client, msg.c_str(), msg.size(), 0);
+			
+		}
+	}
+
+	int Server::receiveMessages(SOCKET clientSocket){
 
 		/*
 			recv(function):
@@ -201,20 +231,53 @@ namespace srv {
 			SOCKET_ERROR is returned
 		*/
 
-		char incomingBuffer[200];
-		int byteCount;
+		char incomingBuffer[200] = "";
 
-		byteCount = recv(clientSocket, incomingBuffer, sizeof(incomingBuffer), 0);
+		while (true) {
 
-		if (byteCount < 0) {
-			cerr << "Error recieving data: " << WSAGetLastError() << endl;
+			int byteCount = recv(clientSocket, incomingBuffer, sizeof(incomingBuffer), 0);
+
+			string msg = incomingBuffer;
+
+			if (byteCount < 0) {
+				cerr << "Error recieving data: " << WSAGetLastError() << endl;
+				break;
+			}
+			else {
+				cout << "Recieved Data: " << incomingBuffer << endl;
+			}
+
+			broadCastMessage(msg, clientSocket);
 		}
-		else {
-			cout << "Recieved Data: " << incomingBuffer << endl;
-		}
+
 		return 0;
+	};
+
+	int Server::receiveIntData(SOCKET clientSocket) {
+		
+		char incomingBuffer[200] = "";
+
+		while (true) {
+
+			int num;
+			int byteCount = recv(clientSocket, incomingBuffer, sizeof(incomingBuffer), 0);
+
+			string msg = incomingBuffer;
+
+			if (byteCount < 0) {
+				cerr << "Error recieving data: " << WSAGetLastError() << endl;
+				break;
+			}
+			else {
+				cout << "Recieved Data: " << incomingBuffer << endl;
+				num = atoi(incomingBuffer);	// turns the char array into the one integer entered
+
+				return num;
+			}
+
+			return 0;
+
+		}
+
 	}
-	;
-
-
 }

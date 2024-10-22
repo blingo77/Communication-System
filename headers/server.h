@@ -2,6 +2,10 @@
 #define SERVER_H
 
 #include <vector>
+#include <string>
+#include <mutex>
+
+using namespace std;
 
 namespace srv {
 	class Server {
@@ -11,19 +15,24 @@ namespace srv {
 		Server();
 		Server(int portNumber);
 
-		void start();
+		SOCKET start();
 		void stop(SOCKET socketToClose);
+		SOCKET acceptSocket(SOCKET serverSocket);
+		void broadCastAlert(string alert, SOCKET clientSocket);
+		void broadCastMessage(string buffer, SOCKET senderSocket);
+		int receiveMessages(SOCKET clientSocket);
+		int receiveIntData(SOCKET clientSocket);
 
 	private:
 		int port;
+		vector<SOCKET> allConnectedSockets;
+		mutex mtx;
 
 		int load_WSA_dll();
 		SOCKET buildSocket();
 		int bindSocket(int port, SOCKET serverSocket);
 		int listenForConnection(SOCKET serverSocket);
-		SOCKET acceptSocket(SOCKET serverSocket);
-		void broadCastMessage();
-		int receiveData(SOCKET clientSocket);
+
 	};
 
 }
