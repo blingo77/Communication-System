@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <mutex>
+#include <unordered_map>
 
 using namespace std;
 
@@ -22,8 +23,11 @@ namespace srv {
 		void broadCastMessage(string buffer, SOCKET senderSocket);
 		int receiveMessages(SOCKET clientSocket);
 		int receiveIntData(SOCKET clientSocket);
+		void setSocketRoom(int roomNum, SOCKET clientSocket);
 
 	private:
+
+		unordered_map<int, vector<SOCKET>> roomMap;
 		int port;
 		vector<SOCKET> allConnectedSockets;
 		mutex mtx;
@@ -32,6 +36,7 @@ namespace srv {
 		SOCKET buildSocket();
 		int bindSocket(int port, SOCKET serverSocket);
 		int listenForConnection(SOCKET serverSocket);
+		void routeMessage(string msg, SOCKET clientSocket);
 
 	};
 

@@ -212,6 +212,32 @@ namespace srv {
 		}
 	}
 
+	void Server::routeMessage(string msg, SOCKET clientSocket) {
+
+		/*
+			go through each room number in the room hashmap and check its vector
+			if the sender socket exists in that vector. If it does send all the sockets
+			in that vector the message the sender socket sent.
+		*/
+
+		// i is set to 1 since our rooms start at 1
+		for (int i = 0; i < this->roomMap.size(); i++) {
+
+			auto it = find(roomMap[i].begin(), roomMap[i].end(), clientSocket);
+
+			if (it != roomMap[i].end()) {
+				
+				for (SOCKET roomSockets : this->roomMap[i]) {
+					send(roomSockets, msg.c_str(), msg.size(), 0);
+				}
+			}
+			else {
+				cout << "Socket was not in room: " << i << endl;
+			}
+		}
+
+	}
+
 	int Server::receiveMessages(SOCKET clientSocket){
 
 		/*
@@ -247,7 +273,8 @@ namespace srv {
 				cout << "Recieved Data: " << incomingBuffer << endl;
 			}
 
-			broadCastMessage(msg, clientSocket);
+			//broadCastMessage(msg, clientSocket);
+			this->routeMessage(msg, clientSocket);
 		}
 
 		return 0;
@@ -279,5 +306,15 @@ namespace srv {
 
 		}
 
+	}
+
+	void Server::setSocketRoom(int roomNum, SOCKET clientSocket) {
+
+		this->roomMap[roomNum].push_back(clientSocket);
+
+		for (const auto& vals : this->roomMap[roomNum]) {
+
+			cout << vals << ' ,' << endl;
+		}
 	}
 }

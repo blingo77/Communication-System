@@ -20,7 +20,6 @@ public:
 private:
 	srv::Server server;
 	
-	unordered_map<int, vector<SOCKET>> roomMap;
 
 	void addToRoom(string message, SOCKET clientSocket);
 };

@@ -18,7 +18,7 @@ void ServerManager::startServer(){
 	serverSocket = this->server.start();
 
 	while (true) {
-		
+
 		acceptedSocket = this->server.acceptSocket(serverSocket);
 
 		if (acceptedSocket == INVALID_SOCKET) {
@@ -30,6 +30,7 @@ void ServerManager::startServer(){
 		thread clientThread([this, acceptedSocket]() {
 			this->server.receiveMessages(acceptedSocket);
 			});
+
 		clientThread.detach();
 	}
 }
@@ -37,6 +38,7 @@ void ServerManager::startServer(){
 void ServerManager::addToRoom(string message, SOCKET clientSocket){
 
 	int room;
+	string welcomeMsg;
 
 	this->server.broadCastAlert(message, clientSocket);
 	room = this->server.receiveIntData(clientSocket);		// will give us the number entered
@@ -50,13 +52,6 @@ void ServerManager::addToRoom(string message, SOCKET clientSocket){
 
 	}
 
-	this->roomMap[room].push_back(clientSocket);	// add the clients socket to the hashmap
+	this->server.setSocketRoom(room, clientSocket);
 
-	// Show what sockets are in the inputted room
-	cout << "Sockets: ";
-	for (const auto& val : this->roomMap[room]) {
-		cout << val << ", ";
-	}
-
-	cout << room << endl;
 }
