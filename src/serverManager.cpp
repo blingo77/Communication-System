@@ -40,8 +40,15 @@ void ServerManager::addToRoom(string message, SOCKET clientSocket){
 	int room;
 	string welcomeMsg;
 
+
 	this->server.broadCastAlert(message, clientSocket);
-	room = this->server.receiveIntData(clientSocket);		// will give us the number entered
+
+	thread selectRoomThread([this, clientSocket, &room]() {
+		room = this->server.receiveIntData(clientSocket);
+		});
+
+	selectRoomThread.join();
+			// will give us the number entered
 
 	// Make sure they input a valid room
 	while (!room) {

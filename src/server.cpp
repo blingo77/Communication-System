@@ -212,7 +212,7 @@ namespace srv {
 		}
 	}
 
-	void Server::routeMessage(string msg, SOCKET clientSocket) {
+	void Server::routeMessage(string buffer, SOCKET clientSocket) {
 
 		/*
 			go through each room number in the room hashmap and check its vector
@@ -220,25 +220,32 @@ namespace srv {
 			in that vector the message the sender socket sent.
 		*/
 
-		// i is set to 1 since our rooms start at 1
-		for (int i = 0; i < this->roomMap.size(); i++) {
+		string msg;
 
-			auto it = find(roomMap[i].begin(), roomMap[i].end(), clientSocket);
+		// use an iterator for the roomMap hashmap
+		for (auto it = this->roomMap.begin(); it != this->roomMap.end(); ++it) {
 
-			if (it != roomMap[i].end()) {
+			// check if clientSocket is in the current vector of the hashmap
+			auto checkVector = find(it->second.begin(), it->second.end(), clientSocket);
+
+			// if it didnt reach the end then execute
+			if (checkVector != it->second.end()) {
 				
-				for (SOCKET roomSockets : this->roomMap[i]) {
+				for (SOCKET roomSockets : it->second) {
+
+					// if roomSockets is client sockets send "You:" preceeding 'msg'
+					msg = roomSockets != clientSocket ? to_string(roomSockets) + ": " + buffer + "\n" : "";
 					send(roomSockets, msg.c_str(), msg.size(), 0);
 				}
 			}
 			else {
-				cout << "Socket was not in room: " << i << endl;
+				cout << "Socket was not in room: " << it->first << endl;
 			}
 		}
 
 	}
 
-	int Server::receiveMessages(SOCKET clientSocket){
+	int Server::receiveMessages(const SOCKET &clientSocket){
 
 		/*
 			recv(function):
@@ -280,7 +287,7 @@ namespace srv {
 		return 0;
 	};
 
-	int Server::receiveIntData(SOCKET clientSocket) {
+	int Server::receiveIntData(const SOCKET &clientSocket) {
 		
 		char incomingBuffer[200] = "";
 
@@ -308,7 +315,7 @@ namespace srv {
 
 	}
 
-	void Server::setSocketRoom(int roomNum, SOCKET clientSocket) {
+	void Server::setSocketRoom(int roomNum, const SOCKET& clientSocket) {
 
 		this->roomMap[roomNum].push_back(clientSocket);
 
@@ -316,5 +323,7 @@ namespace srv {
 
 			cout << vals << ' ,' << endl;
 		}
+
+		
 	}
 }

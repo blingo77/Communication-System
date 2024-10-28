@@ -21,9 +21,9 @@ namespace srv {
 		SOCKET acceptSocket(SOCKET serverSocket);
 		void broadCastAlert(string alert, SOCKET clientSocket);
 		void broadCastMessage(string buffer, SOCKET senderSocket);
-		int receiveMessages(SOCKET clientSocket);
-		int receiveIntData(SOCKET clientSocket);
-		void setSocketRoom(int roomNum, SOCKET clientSocket);
+		int receiveMessages(const SOCKET &clientSocket);
+		int receiveIntData(const SOCKET &clientSocket);
+		void setSocketRoom(int roomNum, const SOCKET& clientSocket);
 
 	private:
 
