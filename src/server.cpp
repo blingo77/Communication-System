@@ -7,6 +7,7 @@
 #include <mutex>
 #include <thread>
 #include <cstdlib>
+#include "../headers/serverCommand.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ namespace srv {
 	// default constructor
 	Server::Server(){
 		port = 55555;
-
+		serverCommands = new ServerCommand(this);
 	}
 
 	// constructor
@@ -188,7 +189,7 @@ namespace srv {
 		return newClientSocket;
 	}
 
-	void Server::broadCastAlert(string alert, SOCKET clientSocket) {
+	void Server::broadCastAlert(string alert, const SOCKET &clientSocket) {
 
 		lock_guard<mutex> lock(this->mtx);
 
@@ -280,8 +281,17 @@ namespace srv {
 				cout << "Recieved Data: " << incomingBuffer << endl;
 			}
 
-			//broadCastMessage(msg, clientSocket);
-			this->routeMessage(msg, clientSocket);
+			// check to see if they are entering a command
+			if (msg[0] == '/') {
+				cout << "COMMAND" << endl;
+				this->serverCommands->checkCommand(msg, clientSocket);
+				
+			}
+			// if not, route the message to the room vector of sockets
+			else {
+				this->routeMessage(msg, clientSocket);
+			}
+
 		}
 
 		return 0;
@@ -324,6 +334,10 @@ namespace srv {
 			cout << vals << ' ,' << endl;
 		}
 
-		
+		this->broadCastAlert("You have entered a room!", clientSocket);
+	}
+
+	Server::~Server() {
+		delete serverCommands;
 	}
 }

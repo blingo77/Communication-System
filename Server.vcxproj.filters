@@ -24,12 +24,18 @@
     <ClCompile Include="src\serverManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\serverCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\serverManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\serverCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

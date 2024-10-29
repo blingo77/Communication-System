@@ -40,7 +40,6 @@ void ServerManager::addToRoom(string message, SOCKET clientSocket){
 	int room;
 	string welcomeMsg;
 
-
 	this->server.broadCastAlert(message, clientSocket);
 
 	thread selectRoomThread([this, clientSocket, &room]() {

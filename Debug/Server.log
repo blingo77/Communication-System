@@ -1,2 +1,4 @@
-﻿  serverManager.cpp
+﻿  server.cpp
+C:\Users\Brandon Lingo\Desktop\Com_System\Server\src\server.cpp(30,10): warning C4101: 'acceptedSocket': unreferenced local variable
+C:\Users\Brandon Lingo\Desktop\Com_System\Server\src\server.cpp(326): warning C4715: 'srv::Server::receiveIntData': not all control paths return a value
   Server.vcxproj -> C:\Users\Brandon Lingo\Desktop\Com_System\Server\Debug\Server.exe

@@ -6,6 +6,8 @@
 #include <mutex>
 #include <unordered_map>
 
+class ServerCommand;
+
 using namespace std;
 
 namespace srv {
@@ -14,12 +16,13 @@ namespace srv {
 	public:
 
 		Server();
+		~Server();
 		Server(int portNumber);
 
 		SOCKET start();
 		void stop(SOCKET socketToClose);
 		SOCKET acceptSocket(SOCKET serverSocket);
-		void broadCastAlert(string alert, SOCKET clientSocket);
+		void broadCastAlert(string alert, const SOCKET& clientSocket);
 		void broadCastMessage(string buffer, SOCKET senderSocket);
 		int receiveMessages(const SOCKET &clientSocket);
 		int receiveIntData(const SOCKET &clientSocket);
@@ -31,6 +34,8 @@ namespace srv {
 		int port;
 		vector<SOCKET> allConnectedSockets;
 		mutex mtx;
+
+		ServerCommand* serverCommands;
 
 		int load_WSA_dll();
 		SOCKET buildSocket();
