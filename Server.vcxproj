@@ -145,11 +145,13 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\serverCommand.cpp" />
+    <ClCompile Include="src\serverFunctions.cpp" />
     <ClCompile Include="src\serverManager.cpp" />
     <ClCompile Include="src\server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\serverCommand.h" />
+    <ClInclude Include="headers\serverFunctions.h" />
     <ClInclude Include="headers\serverManager.h" />
     <ClInclude Include="headers\server.h" />
   </ItemGroup>

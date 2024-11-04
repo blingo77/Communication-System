@@ -2,6 +2,7 @@
 #include <iostream>
 #include <unordered_map>
 #include "..\headers\serverManager.h"
+#include "../headers/serverFunctions.h"
 
 using namespace std;
 
@@ -10,8 +11,8 @@ ServerManager::ServerManager(){
 
 void ServerManager::startServer(){
 
-	SOCKET serverSocket;
-	SOCKET acceptedSocket;
+	SOCKET serverSocket;		// will give us the socket for the server
+	SOCKET acceptedSocket;		// will give us the socket for client that is accepted
 
 	string roomChoice = "Pick a room (Enter a Room): \n 1. Room 1 \n 2. Room 2";
 
@@ -19,7 +20,7 @@ void ServerManager::startServer(){
 
 	while (true) {
 
-		acceptedSocket = this->server.acceptSocket(serverSocket);
+		acceptedSocket = this->server.acceptSocket(serverSocket);	// accepted client socket
 
 		if (acceptedSocket == INVALID_SOCKET) {
 			break;
@@ -27,8 +28,8 @@ void ServerManager::startServer(){
 
 		this->addToRoom(roomChoice, acceptedSocket);
 
-		thread clientThread([this, acceptedSocket]() {
-			this->server.receiveMessages(acceptedSocket);
+		thread clientThread([this, acceptedSocket ]() {
+			ServerFuncs::receiveMessages(acceptedSocket, this->server.roomMap);
 			});
 
 		clientThread.detach();
@@ -38,26 +39,26 @@ void ServerManager::startServer(){
 void ServerManager::addToRoom(string message, SOCKET clientSocket){
 
 	int room;
+
 	string welcomeMsg;
 
-	this->server.broadCastAlert(message, clientSocket);
+	ServerFuncs::broadCastAlert(message, clientSocket);
 
 	thread selectRoomThread([this, clientSocket, &room]() {
-		room = this->server.receiveIntData(clientSocket);
+		room = ServerFuncs::receiveIntData(clientSocket);
 		});
 
 	selectRoomThread.join();
-			// will give us the number entered
 
 	// Make sure they input a valid room
 	while (!room) {
 		
-		this->server.broadCastAlert("Not a valid room!", clientSocket);	// Warn client
-		this->server.broadCastAlert(message, clientSocket);
-		room = this->server.receiveIntData(clientSocket);		// will give us the number entered
+		ServerFuncs::broadCastAlert("Not a valid room!", clientSocket);	// Warn client
+		ServerFuncs::broadCastAlert(message, clientSocket);
+		room = ServerFuncs::receiveIntData(clientSocket);		// will give us the number entered
 
 	}
 
-	this->server.setSocketRoom(room, clientSocket);
+	ServerFuncs::setSocketRoom(room, clientSocket, this->server.roomMap);
 
 }

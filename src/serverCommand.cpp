@@ -1,5 +1,6 @@
 #include "..\headers\serverCommand.h"
 #include <iostream>
+#include "../headers/serverFunctions.h"
 
 using namespace std;
 
@@ -33,11 +34,11 @@ void ServerCommand::checkCommand(string& command, const SOCKET& clientSocket){
 void ServerCommand::exitCommand(const SOCKET& clientSocket){
 
 	string msg = "You are now exiting a room!\n";
-	this->server->broadCastAlert(msg, clientSocket);
+	ServerFuncs::broadCastAlert(msg, clientSocket);
 }
 
 void ServerCommand::infoComamnd(const SOCKET& clientSocket){
 
 	string msg = "Getting info for commands\n";
-	this->server->broadCastAlert(msg, clientSocket);
+	ServerFuncs::broadCastAlert(msg, clientSocket);
 }
