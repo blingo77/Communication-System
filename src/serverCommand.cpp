@@ -4,41 +4,42 @@
 
 using namespace std;
 
-ServerCommand::ServerCommand(Server* server) : server(server){
-
-	commandMap = {
+// map for the commands
+unordered_map<string, CommandType> commandMap = {
 		{"/exit", CommandType::EXIT},
 		{"/info", CommandType::INFO}
-	};
-}
+};
 
-void ServerCommand::checkCommand(string& command, const SOCKET& clientSocket){
+namespace cmd{
 
-	auto it = this->commandMap.find(command);
+	void findCommand(string& command, const SOCKET& clientSocket) {
 
-	if (it != this->commandMap.end()) {
+		auto it = commandMap.find(command);
 
-		CommandType commandType = it->second;
+		if (it != commandMap.end()) {
 
-		switch (commandType) {
-			case CommandType::EXIT:
-				this->exitCommand(clientSocket);
-				break;
-			case CommandType::INFO:
-				this->infoComamnd(clientSocket);
-				break;
+			CommandType commandType = it->second;
+
+			switch (commandType) {
+				case CommandType::EXIT:
+					exitCommand(clientSocket);
+					break;
+				case CommandType::INFO:
+					infoComamnd(clientSocket);
+					break;
+			}
 		}
 	}
-}
 
-void ServerCommand::exitCommand(const SOCKET& clientSocket){
+	void exitCommand(const SOCKET& clientSocket){
 
-	string msg = "You are now exiting a room!\n";
-	ServerFuncs::broadCastAlert(msg, clientSocket);
-}
+		string msg = "You are now exiting a room!\n";
+		ServerFuncs::broadCastAlert(msg, clientSocket);
+	}
 
-void ServerCommand::infoComamnd(const SOCKET& clientSocket){
+	void infoComamnd(const SOCKET& clientSocket){
 
-	string msg = "Getting info for commands\n";
-	ServerFuncs::broadCastAlert(msg, clientSocket);
+		string msg = "Getting info for commands\n";
+		ServerFuncs::broadCastAlert(msg, clientSocket);
+	}
 }

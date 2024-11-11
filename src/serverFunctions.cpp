@@ -1,5 +1,6 @@
 #include "../headers/serverFunctions.h"
 #include <mutex>
+#include "../headers/serverUtils.h"
 
 using namespace std;
 
@@ -91,8 +92,14 @@ namespace ServerFuncs {
 
 			string msg = incomingBuffer;
 
+			// byteCount should not be less than 0
 			if (byteCount < 0) {
+				
 				cerr << "Error recieving data: " << WSAGetLastError() << endl;
+
+				// the socket most likely disconnected, so remove it from the vector
+				ServerUtils::removeFromRoom(clientSocket, roomMap);
+
 				break;
 			}
 			else {
@@ -100,13 +107,9 @@ namespace ServerFuncs {
 			}
 
 			// check to see if they are entering a command
-			if (msg[0] == '/') {
-				cout << "COMMAND" << endl;
-				//this->serverCommands->checkCommand(msg, clientSocket);
+			if (!ServerUtils::checkCommand(msg, clientSocket)) {
 
-			}
-			// if not, route the message to the room vector of sockets
-			else {
+				// if false, then route the message to the correct room
 				routeMessage(msg, clientSocket, roomMap);
 			}
 
@@ -115,6 +118,7 @@ namespace ServerFuncs {
 		return 0;
 	};
 
+	// reveive a number and return it as an int
 	int receiveIntData(const SOCKET& clientSocket) {
 
 		char incomingBuffer[200] = "";
@@ -154,4 +158,6 @@ namespace ServerFuncs {
 
 		broadCastAlert("You have entered a room!", clientSocket);
 	}
+
+
 }

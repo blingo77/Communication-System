@@ -148,12 +148,14 @@
     <ClCompile Include="src\serverFunctions.cpp" />
     <ClCompile Include="src\serverManager.cpp" />
     <ClCompile Include="src\server.cpp" />
+    <ClCompile Include="src\serverUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\serverCommand.h" />
     <ClInclude Include="headers\serverFunctions.h" />
     <ClInclude Include="headers\serverManager.h" />
     <ClInclude Include="headers\server.h" />
+    <ClInclude Include="headers\serverUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

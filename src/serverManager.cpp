@@ -10,6 +10,7 @@ ServerManager::ServerManager(){
 }
 
 void ServerManager::startServer(){
+	
 
 	SOCKET serverSocket;		// will give us the socket for the server
 	SOCKET acceptedSocket;		// will give us the socket for client that is accepted

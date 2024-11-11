@@ -5,12 +5,12 @@
 #include <WS2tcpip.h>
 #include <iostream>
 #include <tchar.h>
-#include "../headers/server.h"
 #include <string>
 #include <mutex>
 #include <thread>
 #include <cstdlib>
-#include "../headers/serverCommand.h"
+#include "../headers/server.h"
+
 
 namespace ServerFuncs {
 
