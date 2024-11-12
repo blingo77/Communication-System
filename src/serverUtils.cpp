@@ -19,14 +19,14 @@ namespace ServerUtils {
 		}
 	}
 
-	bool ServerUtils::checkCommand(string& msg, const SOCKET& clientSocket){
+	bool ServerUtils::checkCommand(string& msg, const SOCKET& clientSocket, unordered_map<int, vector<SOCKET>>& roomMap){
 
 		bool isCommand;
 
 		if (msg[0] == '/') {
 
 			cout << "COMMAND" << endl;
-			cmd::findCommand(msg, clientSocket);
+			cmd::findCommand(msg, clientSocket, roomMap);
 			isCommand = true;
 		}
 		else {

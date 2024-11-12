@@ -151,10 +151,12 @@
     <ClCompile Include="src\serverUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="headers\serverCommand.h" />
+    <ClInclude Include="headers\serverCommand\serverCommand.h" />
+    <ClInclude Include="headers\serverCommand\commandMessages.h" />
     <ClInclude Include="headers\serverFunctions.h" />
     <ClInclude Include="headers\serverManager.h" />
     <ClInclude Include="headers\server.h" />
+    <ClInclude Include="headers\serverMessages.h" />
     <ClInclude Include="headers\serverUtils.h" />
   </ItemGroup>
   <ItemGroup>

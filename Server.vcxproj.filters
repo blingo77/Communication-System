@@ -41,13 +41,19 @@
     <ClInclude Include="headers\serverManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="headers\serverCommand.h">
+    <ClInclude Include="headers\serverCommand\serverCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\serverFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\serverUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\serverCommand\commandMessages.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\serverMessages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -107,7 +107,7 @@ namespace ServerFuncs {
 			}
 
 			// check to see if they are entering a command
-			if (!ServerUtils::checkCommand(msg, clientSocket)) {
+			if (!ServerUtils::checkCommand(msg, clientSocket, roomMap)) {
 
 				// if false, then route the message to the correct room
 				routeMessage(msg, clientSocket, roomMap);

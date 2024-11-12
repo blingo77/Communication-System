@@ -1,8 +1,10 @@
 #include <WinSock2.h>
 #include <iostream>
 #include <unordered_map>
+
 #include "..\headers\serverManager.h"
 #include "../headers/serverFunctions.h"
+#include "../headers/serverMessages.h"
 
 using namespace std;
 
@@ -27,6 +29,7 @@ void ServerManager::startServer(){
 			break;
 		}
 
+		ServerFuncs::broadCastAlert(srvMsg::logo, acceptedSocket);
 		this->addToRoom(roomChoice, acceptedSocket);
 
 		thread clientThread([this, acceptedSocket ]() {
